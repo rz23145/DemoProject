@@ -103,12 +103,14 @@ async def get_market_data_this_week():
 
 def analyze_with_claude(market_data):
     """Send market data to Claude, get briefing back"""
-    
+    news_raw = market_data.get("news", [])
+    news_for_prompt = news_raw[:5] if isinstance(news_raw, list) else news_raw
+
     prompt = f"""You are a top VC analyst. Analyze this real market data from the past 7 days.
 
 MARKET DATA:
 - Stocks: {json.dumps(market_data.get('stock_movers', {}))}
-- News: {json.dumps(market_data.get('news', {})[:5])}
+- News: {json.dumps(news_for_prompt)}
 - Fed: {json.dumps(market_data.get('fed_rate', {}))}
 - Crypto: {json.dumps(market_data.get('crypto', {}))}
 
@@ -145,7 +147,7 @@ Return ONLY valid JSON (no markdown, no extra text):
 }}"""
 
     message = client.messages.create(
-        model="claude-3-5-sonnet-20241022",
+        model="claude-opus-4-20250514",
         max_tokens=2000,
         messages=[{"role": "user", "content": prompt}]
     )
