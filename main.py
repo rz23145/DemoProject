@@ -9,7 +9,7 @@ from anthropic import Anthropic
 app = FastAPI()
 app.add_middleware(CORSMiddleware, allow_origins=["*"])
 
-client = Anthropic()
+client = Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
 
 async def get_market_data_this_week():
     """Scrape real market data from past 7 days"""
